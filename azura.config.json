@@ -1,7 +1,7 @@
-const config = {
-  environment: 'development',
+{
+  environment: "development",
   server: {
-    port: process.env.PORT || 5000,
+    port: 5000,
     cluster: false,
     ipHost: true,
     https: true
@@ -13,7 +13,7 @@ const config = {
   plugins: {
     cors: {
       enabled: true,
-      origins: ['*']
+      origins: ["*"]
     },
     rateLimit: {
       enabled: true,
@@ -21,6 +21,4 @@ const config = {
       timeframe: 60000
     }
   }
-};
-
-module.exports = config;
+}
