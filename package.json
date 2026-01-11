@@ -11,6 +11,6 @@
   "author": "philsean",
   "license": "ISC",
   "dependencies": {
-    "hono": "^4.11.3"
+    "azurajs": "^2.2.0"
   }
 }
