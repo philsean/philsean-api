@@ -16,7 +16,7 @@ const config = {
       origins: ['*']
     },
     rateLimit: {
-      enabled: false,
+      enabled: true,
       limit: 100,
       timeframe: 60000
     }
