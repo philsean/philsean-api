@@ -1,7 +1,15 @@
-const { Hono } = require('hono');
+const { AzuraClient } = require('azurajs');
+const { createLoggingMiddleware } = require('azurajs/middleware');
 
-const app = new App();
+const app = new AzuraClient();
+const logger = createLoggingMiddleware(app.getConfig());
 
-app.get('/', c => c.text('Hello People!'));
+app.use(logger);
+
+app.get('/', (req, res) => {
+  res.status(200).json({ message: '👁️👄👁️' });
+});
+
+app.listen();
 
 module.exports = app;
