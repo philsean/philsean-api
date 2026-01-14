@@ -1,10 +1,11 @@
+const path = require('path');
 const express = require('express');
 const api = express.Router();
 
 const { createCanvas, loadImage, GlobalFonts } = require('@napi-rs/canvas');
 
-GlobalFonts.registerFromPath('./src/public/styles/fonts/Inter.ttf', 'Inter');
-GlobalFonts.registerFromPath('./src/public/styles/fonts/Inter-Italic.ttf', 'InterItalic');
+GlobalFonts.registerFromPath(path.join(__dirname, '../../public/styles/fonts/Inter.ttf'), 'Inter');
+GlobalFonts.registerFromPath(path.join(__dirname, '../../src/public/styles/fonts/Inter-Italic.ttf'), 'InterItalic');
 
 const canvasCache = new Map();
 const IMAGE_TTL = 1000 * 60 * 60;
