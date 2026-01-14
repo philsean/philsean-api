@@ -156,7 +156,7 @@ api.post('/', async (req, res) => {
       canvasCache.delete(r);
     }, IMAGE_TTL);
 
-    res.status(200).json({ image: `http://localhost:5000/api/v1/canvas/${r}.png`, logs, parsedErrors });
+    res.status(200).json({ image: `${req.protocol}://${req.get('host')}/api/v1/canvas/${r}.png`, logs, parsedErrors });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Something went wrong while trying to create this image.', error: err.message });
