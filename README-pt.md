@@ -1,7 +1,9 @@
+<center><img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=Yby&fontSize=80&fontAlignY=35&animation=twinkling&fontColor=gradient" /></center>
+
 # 🎨 Yby API
 
-API for **dynamic image generation** using Canvas over HTTP.  
-Allows composing images from **shapes, text, and external images**, returning a temporary URL to access the generated PNG.
+API para **geração dinâmica de imagens** usando Canvas via HTTP.  
+Permite compor imagens a partir de **formas, textos e imagens externas**, retornando uma URL temporária para acesso ao PNG gerado.
 
 ---
 
@@ -13,11 +15,11 @@ https://ybyapi.vercel.app/api/v1
 
 ---
 
-## 🚀 Available Endpoint
+## 🚀 Endpoint Disponível
 
 ### `POST /canvas`
 
-Creates a PNG image dynamically based on the configuration sent in the request body.
+Cria uma imagem PNG dinamicamente com base nas configurações enviadas no body.
 
 ---
 
@@ -43,42 +45,42 @@ Content-Type: application/json
 
 ---
 
-### 🔧 Parameters
+### 🔧 Parâmetros
 
-#### `width` (number) **[required]**
-Canvas width in pixels.
+#### `width` (number) **[obrigatório]**
+Largura do canvas em pixels.
 
-#### `height` (number) **[required]**
-Canvas height in pixels.
+#### `height` (number) **[obrigatório]**
+Altura do canvas em pixels.
 
-#### `images` (array) *(optional)*
-List of external images that can be used by shapes of type `image`.
+#### `images` (array) *(opcional)*
+Lista de imagens externas que podem ser usadas nas shapes do tipo `image`.
 
 ```json
 {
   "name": "logo",
-  "link": "https://example.com/logo.png"
+  "link": "https://exemplo.com/logo.png"
 }
 ```
 
-| Field | Type | Description |
-|------|------|-------------|
-| name | string | Image identifier |
-| link | string | Public image URL |
+| Campo | Tipo | Descrição |
+|------|-----|----------|
+| name | string | Identificador da imagem |
+| link | string | URL pública da imagem |
 
 ---
 
-#### `shapes` (array) *(optional)*
-List of elements drawn on the canvas.
+#### `shapes` (array) *(opcional)*
+Lista de elementos desenhados no canvas.
 
-Each item must contain the `name` field, which defines the shape type.
+Cada item deve conter obrigatoriamente o campo `name`, que define o tipo da shape.
 
 ---
 
-## 🧩 Shape Types
+## 🧩 Tipos de Shapes
 
 ### 🟦 `rect`
-Draws a rectangle.
+Desenha um retângulo.
 
 ```json
 {
@@ -95,7 +97,7 @@ Draws a rectangle.
 ---
 
 ### ⚪ `circle`
-Draws a circle.
+Desenha um círculo.
 
 ```json
 {
@@ -110,7 +112,7 @@ Draws a circle.
 ---
 
 ### ✍️ `text`
-Draws text on the canvas.
+Desenha texto no canvas.
 
 ```json
 {
@@ -130,7 +132,7 @@ Draws text on the canvas.
 ---
 
 ### 🖼️ `image`
-Draws an image previously loaded in `images`.
+Desenha uma imagem previamente carregada em `images`.
 
 ```json
 {
@@ -146,7 +148,7 @@ Draws an image previously loaded in `images`.
 
 ---
 
-## 🌫️ Shadows (optional for any shape)
+## 🌫️ Sombras (opcional para qualquer shape)
 
 ```json
 {
@@ -159,7 +161,7 @@ Draws an image previously loaded in `images`.
 
 ---
 
-## 📤 Response — Success (200)
+## 📤 Response — Sucesso (200)
 
 ```json
 {
@@ -172,11 +174,11 @@ Draws an image previously loaded in `images`.
 }
 ```
 
-### 🔗 The image is available temporarily (TTL: 1 hour).
+### 🔗 A imagem fica disponível temporariamente (TTL: 1 hora).
 
 ---
 
-## ⚠️ Response — Validation Error (400)
+## ⚠️ Response — Erro de validação (400)
 
 ```json
 {
@@ -186,7 +188,7 @@ Draws an image previously loaded in `images`.
 
 ---
 
-## ❌ Response — Image expired (404)
+## ❌ Response — Imagem expirada (404)
 
 ```json
 {
@@ -198,20 +200,20 @@ Draws an image previously loaded in `images`.
 
 ## 📥 GET /canvas/:id.png
 
-Returns a previously generated image.
+Retorna a imagem gerada anteriormente.
 
-### Example
+### Exemplo
 ```
 GET /canvas/abc123.png
 ```
 
 ### Response
 - `200` → PNG
-- `404` → image not found or expired
+- `404` → imagem não encontrada ou expirada
 
 ---
 
-## 🛑 Invalid routes
+## 🛑 Rotas inválidas
 
 ### `GET /canvas`
 
@@ -223,7 +225,7 @@ GET /canvas/abc123.png
 
 ---
 
-## 🧪 Full usage example (POST)
+## 🧪 Exemplo completo de uso (POST)
 
 ```json
 {
@@ -232,7 +234,7 @@ GET /canvas/abc123.png
   "images": [
     {
       "name": "logo",
-      "link": "https://example.com/logo.png"
+      "link": "https://exemplo.com/logo.png"
     }
   ],
   "shapes": [

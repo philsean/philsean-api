@@ -1,6 +1,6 @@
 {
   "name": "philsean-api",
-  "description": "", 
+  "description": "",
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
@@ -11,6 +11,10 @@
   "author": "philsean",
   "license": "ISC",
   "dependencies": {
-    "azurajs": "^2.2.0"
+    "@kauzx/logger": "^1.2.2",
+    "@napi-rs/canvas": "^0.1.88",
+    "azurajs": "^2.2.0",
+    "express": "^5.2.1",
+    "path": "^0.12.7"
   }
 }
