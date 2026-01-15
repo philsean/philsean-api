@@ -1,7 +1,17 @@
 const { logger: log, icon } = require('@kauzx/logger');
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
 const express = require('express');
 const app = express();
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'You\'re making too many requests.',
+});
+
+app.use(cors());
+app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
