@@ -10,6 +10,8 @@ const limiter = rateLimit({
   message: 'You\'re making too many requests.',
 });
 
+app.set('trust proxy', 1);
+
 app.use(cors());
 app.use(limiter);
 app.use(express.json());

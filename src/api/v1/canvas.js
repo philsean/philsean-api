@@ -129,6 +129,25 @@ api.post('/', async (req, res) => {
             }
 
             ctx.save();
+            const angle = shape.rotate || 0;
+
+            if (angle !== 0) {
+              let cx = shape.x || 0;
+              let cy = shape.y || 0;
+
+              if (shape.name === 'circle') {
+                cx = shape.x;
+                cy = shape.y;
+              } else {
+                cx += (shape.width || 0) / 2;
+                cy += (shape.height || 0) / 2;
+              }
+
+              ctx.translate(cx, cy);
+              ctx.rotate(angle);
+              ctx.translate(-cx, -cy);
+            }
+
             if (shape.shadowColor && shape.shadowBlur > 0) {
               ctx.shadowColor = shape.shadowColor;
               ctx.shadowBlur = shape.shadowBlur;
@@ -137,11 +156,40 @@ api.post('/', async (req, res) => {
               ctx.shadowOffsetY = shape.shadowOffsetY || ctx.shadowOffsetY;
             }
 
+            if (shape.color && isObject(shape.color)) {
+              if (Array.isArray(shape.color.gradient) && shape.color.gradient.length >= 4 && Array.isArray(shape.color.colors) && shape.color.colors.length) {
+                const coords = shape.color.gradient.map(g => parseFloat(g));
+                if (coords.some(c => !Number.isFinite(c))) {
+                  parsedErrors.push(`'shapes.${i}.color.gradient' must contain 4 numeric values: [x0,y0,x1,y1].`);
+                } else {
+                  const gradient = ctx.createLinearGradient(coords[0], coords[1], coords[2], coords[3]);
+
+                  shape.color.colors.forEach((colorObj, j) => {
+                    let off = typeof colorObj.offSet === 'string' ? parseFloat(colorObj.offSet) : colorObj.offSet;
+                    if (!Number.isFinite(off)) {
+                      parsedErrors.push(`'shapes.${i}.color.colors.${j}.offSet' is invalid or not a number.`);
+                      return;
+                    }
+                    if (off > 1) off = off / 100;
+                    off = Math.max(0, Math.min(1, off));
+
+                    const c = colorObj.color || '#fff';
+                    gradient.addColorStop(off, c);
+                  });
+
+                  shape.color = gradient;
+                }
+              } else {
+                parsedErrors.push(`'shapes.${i}.color.gradient' and/or 'shapes.${i}.color.colors' are invalid. (gradient: Array<Number> | colors: Array<Object>)`);
+              }
+            }
+
             let shapeR = shapeF(ctx, shape, r);
             ctx.restore();
 
             shapesDrew++;
           } catch (err) {
+            console.log(err);
             parsedErrors.push(`'shapes.${i}' returned a error: ${err.message}`);
           }
         }
@@ -177,4 +225,7 @@ api.get('/:id.png', (req, res) => {
 
 api.get('/', (req, res) => res.status(404).json({ message: 'For this endpoint, use the POST method.' }));
 
+function isObject(x) {
+  return typeof x === 'object' && !Array.isArray(x) && x !== null;
+}
 module.exports = api;
