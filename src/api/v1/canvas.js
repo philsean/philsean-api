@@ -15,7 +15,7 @@ api.post('/', async (req, res) => {
   const shapesHandler = {
     rect: (ctx, { x = 0, y = 0, width = 0, height = 0, color = '#fff', radius = 0 }) => {
       ctx.fillStyle = color;
-      if (radius > 0) ctx.fillRect(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
+      if (radius <= 0) ctx.fillRect(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
       else {
         ctx.beginPath();
         ctx.roundRect(x, y, width, height, radius);
@@ -78,7 +78,7 @@ api.post('/', async (req, res) => {
 
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
-    
+
     if (backgroundColor) {
       ctx.save();
       ctx.fillStyle = backgroundColor;
