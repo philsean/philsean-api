@@ -69,7 +69,7 @@ api.post('/', async (req, res) => {
   let logs = [];
 
   try {
-    let { images, shapes, width, height } = req.body;
+    let { images, shapes, width, height, color: backgroundColor } = req.body;
 
     width = parseInt(width);
     height = parseInt(height);
@@ -78,6 +78,13 @@ api.post('/', async (req, res) => {
 
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
+    
+    if (backgroundColor) {
+      ctx.save();
+      ctx.fillStyle = backgroundColor;
+      ctx.fillRect(0, 0, width, height);
+      ctx.restore();
+    }
 
     const r = (Math.random() + 1).toString(36).substring(7);
 
