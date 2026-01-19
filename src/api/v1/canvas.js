@@ -7,10 +7,15 @@ const { createCanvas, loadImage, GlobalFonts } = require('@napi-rs/canvas');
 GlobalFonts.registerFromPath(path.join(__dirname, '../../public/styles/fonts/Inter.ttf'), 'Inter');
 GlobalFonts.registerFromPath(path.join(__dirname, '../../src/public/styles/fonts/Inter-Italic.ttf'), 'InterItalic');
 
+const fonts = {};
+fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${process.env.FONTS_KEY}`).then(data => {});
+
 const canvasCache = new Map();
 const IMAGE_TTL = 1000 * 60 * 60;
 
 api.post('/', async (req, res) => {
+  const now = process.hrtime();
+
   const imgs = {};
   const shapesHandler = {
     rect: (ctx, { x = 0, y = 0, width = 0, height = 0, color = '#fff', radius = 0 }) => {
@@ -69,7 +74,7 @@ api.post('/', async (req, res) => {
   let logs = [];
 
   try {
-    let { images, shapes, width, height, color: backgroundColor } = req.body;
+    let { images, fonts, shapes, width, height, color: backgroundColor } = req.body;
 
     width = parseInt(width);
     height = parseInt(height);
@@ -88,7 +93,7 @@ api.post('/', async (req, res) => {
 
     const r = (Math.random() + 1).toString(36).substring(7);
 
-    if (images) {
+    if (images || images?.length) {
       if (!Array.isArray(images)) parsedErrors.push("Option 'images' should be an Array.");
       else {
         let imagesLoaded = await Promise.all(
@@ -114,7 +119,46 @@ api.post('/', async (req, res) => {
       }
     }
 
-    if (shapes) {
+    if (fonts || fonts?.length) {
+      if (!Array.isArray(fonts)) parsedErrors.push("Option 'fonts' should be an Array.");
+      else {
+        let fontsLoaded = await Promise.all(
+          fonts.map(async (name, i) => {
+            if (!name || typeof name !== 'string') {
+              parsedErrors.push(`'fonts.${i}' is not a valid string.`);
+              return false;
+            }
+
+            if (GlobalFonts.has(name.replace(/ /g, ''))) return name.replace(/ /g, '');
+
+            try {
+              const search = await searchFont(name);
+              if (!search || search.error) {
+                parsedErrors.push(search.error);
+                return false;
+              }
+
+              const { font, ttf } = search;
+
+              const family = font.family.replace(/ /g, '');
+              GlobalFonts.register(ttf, family);
+
+              return family;
+            } catch (err) {
+              console.log(err);
+              parsedErrors.push(`'fonts.${i}' unable to load.`);
+              return false;
+            }
+          })
+        );
+
+        fontsLoaded = fontsLoaded.filter(f => f);
+
+        logs.push(`${fontsLoaded.length} fonts have been uploaded. (${fontsLoaded.join(', ')})`);
+      }
+    }
+
+    if (shapes || shapes?.length) {
       if (!Array.isArray(shapes)) parsedErrors.push("Option 'shapes' should be an Array.");
       else {
         let shapesDrew = 0;
@@ -212,7 +256,10 @@ api.post('/', async (req, res) => {
       canvasCache.delete(r);
     }, IMAGE_TTL);
 
-    res.status(200).json({ image: `${req.protocol}://${req.get('host')}/api/v1/canvas/${r}.png`, logs, parsedErrors });
+    const [sec, nanos] = process.hrtime(now);
+    const time = sec * 1000 + nanos / 1e6;
+
+    res.status(200).json({ execution: `${time.toFixed(2)}ms`, image: `${req.protocol}://${req.get('host')}/api/v1/canvas/${r}.png`, logs, parsedErrors });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Something went wrong while trying to create this image.', error: err.message });
@@ -235,4 +282,19 @@ api.get('/', (req, res) => res.status(404).json({ message: 'For this endpoint, u
 function isObject(x) {
   return typeof x === 'object' && !Array.isArray(x) && x !== null;
 }
+
+async function searchFont(name) {
+  const res = await fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${process.env.FONTS_KEY}&family=${name.replace(/ /g, '+')}`);
+  const data = await res.json();
+  const font = data?.items?.[0];
+
+  if (!font) return { error: `Could not find font '${name}' on Google Fonts.` };
+
+  const fontData = await fetch(font.menu);
+  const arrayBuffer = await fontData.arrayBuffer();
+  const ttf = Buffer.from(arrayBuffer);
+
+  return { font, ttf };
+}
+
 module.exports = api;
