@@ -7,9 +7,6 @@ const { createCanvas, loadImage, GlobalFonts } = require('@napi-rs/canvas');
 GlobalFonts.registerFromPath(path.join(__dirname, '../../public/styles/fonts/Inter.ttf'), 'Inter');
 GlobalFonts.registerFromPath(path.join(__dirname, '../../src/public/styles/fonts/Inter-Italic.ttf'), 'InterItalic');
 
-const fonts = {};
-fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${process.env.FONTS_KEY}`).then(data => {});
-
 const canvasCache = new Map();
 const IMAGE_TTL = 1000 * 60 * 60;
 
