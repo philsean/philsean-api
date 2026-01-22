@@ -138,10 +138,10 @@ api.post('/', async (req, res) => {
                 return false;
               }
 
-              const { font, ttf } = search;
+              const { font, fonts } = search;
 
               const family = font.family.replace(/ /g, '');
-              GlobalFonts.register(ttf, family);
+              fonts.map(ttf => GlobalFonts.register(ttf, family));
 
               return family;
             } catch (err) {
@@ -267,6 +267,7 @@ api.post('/', async (req, res) => {
 });
 
 api.get('/:id.png', (req, res) => {
+  console.error(canvasCache);
   const buffer = canvasCache.get(req.params.id);
 
   if (!buffer) {
@@ -290,11 +291,15 @@ async function searchFont(name) {
 
   if (!font) return { error: `Could not find font '${name}' on Google Fonts.` };
 
-  const fontData = await fetch(font.menu);
-  const arrayBuffer = await fontData.arrayBuffer();
-  const ttf = Buffer.from(arrayBuffer);
+  const fonts = await Promise.all(
+    Object.entries(font.files).map(async file => {
+      const fontData = await fetch(file[1]);
+      const arrayBuffer = await fontData.arrayBuffer();
+      return Buffer.from(arrayBuffer);
+    })
+  );
 
-  return { font, ttf };
+  return { font, fonts };
 }
 
 module.exports = api;
