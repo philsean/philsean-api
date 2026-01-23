@@ -200,8 +200,8 @@ api.post('/', async (req, res) => {
               ctx.shadowColor = shape.shadowColor;
               ctx.shadowBlur = shape.shadowBlur;
 
-              ctx.shadowOffsetX = shape.shadowOffsetX || ctx.shadowOffsetX;
-              ctx.shadowOffsetY = shape.shadowOffsetY || ctx.shadowOffsetY;
+              ctx.shadowOffsetX = parseInt(shape.shadowOffsetX) || ctx.shadowOffsetX;
+              ctx.shadowOffsetY = parseInt(shape.shadowOffsetY) || ctx.shadowOffsetY;
             }
 
             if (shape.color && isObject(shape.color)) {
