@@ -246,7 +246,7 @@ api.post('/', async (req, res) => {
       }
     }
 
-    const buffer = canvas.toBuffer('image/png');
+    const buffer = await canvas.toBuffer('image/png');
 
     canvasCache.set(r, buffer);
     setTimeout(() => {
