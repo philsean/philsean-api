@@ -254,7 +254,7 @@ api.post('/', async (req, res) => {
     const [sec, nanos] = process.hrtime(now);
     const time = sec * 1000 + nanos / 1e6;
 
-    res.status(200).json({ execution: `${time.toFixed(2)}ms`, image: `${req.protocol}://${req.get('host')}/api/v1/canvas/${r}.png`, logs, parsedErrors });
+    res.status(200).json({ execution: `${time.toFixed(2)}ms`, image: `${req.protocol}://${req.get('host')}/api/v1/canvas/${rr}.png`, logs, parsedErrors });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Something went wrong while trying to create this image.', error: err.message });
