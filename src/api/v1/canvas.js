@@ -230,7 +230,7 @@ api.post('/', async (req, res) => {
               }
             }
 
-            let shapeR = shapeF(ctx, shape, r);
+            let shapeR = shapeF(ctx, shape);
             ctx.restore();
 
             shapesDrew++;
