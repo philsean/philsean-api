@@ -88,8 +88,6 @@ api.post('/', async (req, res) => {
       ctx.restore();
     }
 
-    const r = (Math.random() + 1).toString(36).substring(7);
-
     if (images || images?.length) {
       if (!Array.isArray(images)) parsedErrors.push("Option 'images' should be an Array.");
       else {
@@ -247,10 +245,10 @@ api.post('/', async (req, res) => {
     }
 
     const buffer = await canvas.toBuffer('image/png');
-
-    canvasCache.set(r, buffer);
+    const rr = (Math.random() + 1).toString(36).substring(7);
+    canvasCache.set(rr, buffer);
     setTimeout(() => {
-      canvasCache.delete(r);
+      canvasCache.delete(rr);
     }, IMAGE_TTL);
 
     const [sec, nanos] = process.hrtime(now);
@@ -263,9 +261,9 @@ api.post('/', async (req, res) => {
   }
 });
 
-api.get('/:id.png', (req, res) => {
+api.get('/:id', (req, res) => {
   console.error(canvasCache);
-  const buffer = canvasCache.get(req.params.id);
+  const buffer = canvasCache.get(req.params.id.replace('.png', ''));
 
   if (!buffer) {
     return res.status(404).json({ message: 'Image expired or not found.' });
